@@ -1,13 +1,13 @@
 {
-  "name": "creative",
+  "name": "creative-excellence",
   "owner": {
     "name": "AThevon"
   },
   "plugins": [
     {
-      "name": "creative-skills",
+      "name": "creative-excellence",
       "source": "./",
-      "description": "Creative coding skills — animations, 3D, design systems, motion principles"
+      "description": "Creative coding excellence — animations, 3D, design systems, motion principles"
     }
   ]
 }

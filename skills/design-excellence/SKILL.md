@@ -11,9 +11,9 @@ allowed-tools: Bash, Read, Edit, Write, Grep, Glob, WebSearch, Agent
 
 ---
 
-## /design-excellence vs /creative
+## /design-excellence vs /creative-excellence
 
-| | `/creative` | `/design-excellence` |
+| | `/creative-excellence` | `/design-excellence` |
 |---|---|---|
 | **Philosophy** | "Make this thing beautiful/wow" | "Build a visual universe from scratch" |
 | **Entry point** | Adapts to existing code | Mandatory brainstorm, wipes design if existing |
@@ -21,14 +21,14 @@ allowed-tools: Bash, Read, Edit, Write, Grep, Glob, WebSearch, Agent
 | **Audit** | No final audit | Full design-audit at the end |
 | **Scope** | One component/page/effect | Entire project visual identity |
 
-`/design-excellence` calls the same sub-skills as `/creative` for implementation.
+`/design-excellence` calls the same sub-skills as `/creative-excellence` for implementation.
 
 ---
 
 ## Plugin Root Detection
 
 ```bash
-PLUGIN_ROOT=$(find ~/.claude/plugins -path "*/creative-skills/skills" -type d | head -1 | sed 's|/skills$||')
+PLUGIN_ROOT=$(find ~/.claude/plugins -path "*/creative-excellence/skills" -type d | head -1 | sed 's|/skills$||')
 ```
 
 All sub-skills live in `$PLUGIN_ROOT/skills/_creative/`.
@@ -176,4 +176,4 @@ When invoked on a project that already has design/styling:
 3. In Phase 4, **replace** existing design tokens/styles with the new design system
 4. Preserve functionality and layout structure — only replace the visual layer
 
-This is intentional: `/design-excellence` rebuilds the visual universe. To enhance what exists, use `/creative` instead.
+This is intentional: `/design-excellence` rebuilds the visual universe. To enhance what exists, use `/creative-excellence` instead.
