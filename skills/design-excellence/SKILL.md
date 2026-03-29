@@ -17,11 +17,25 @@ allowed-tools: Bash, Read, Edit, Write, Grep, Glob, WebSearch, Agent
 |---|---|---|
 | **Philosophy** | "Make this thing beautiful/wow" | "Build a visual universe from scratch" |
 | **Entry point** | Adapts to existing code | Mandatory brainstorm, wipes design if existing |
+| **Discovery** | Lightweight, only when vague | Full brainstorm, never skipped |
 | **Design system** | Optional, implicit | Required, generates MASTER.md |
-| **Audit** | No final audit | Full design-audit at the end |
+| **Audit** | Quick check before delivery | Full design-audit at the end |
 | **Scope** | One component/page/effect | Entire project visual identity |
 
 `/design-excellence` calls the same sub-skills as `/creative-excellence` for implementation.
+
+---
+
+## Iron Rules
+
+1. **Never skip the brainstorm.** Not even if the user says "just make it look good." Especially then.
+2. **One question at a time during brainstorm.** Never bundle. The second question depends on the first answer.
+3. **Never proceed without both theses validated.** Visual + interaction, both explicitly approved.
+4. **Every design token comes from MASTER.md.** No magic numbers, no rogue hex values.
+5. **Every animation respects the interaction thesis.** Timing, easing, forbidden patterns — no exceptions.
+6. **Never install a dependency without asking.**
+7. **Work page by page, validate page by page.** Never try to do everything at once.
+8. **The audit is not optional.** Phase 5 always runs, even if the user seems happy.
 
 ---
 
@@ -39,40 +53,74 @@ All sub-skills live in `$PLUGIN_ROOT/skills/_creative/`.
 
 ### Phase 1 — BRAINSTORM (mandatory, never skip)
 
-Before writing a single line of code, ask and get answers for ALL of these:
+This is the foundation. Rush it and everything downstream is wrong. The goal: understand the user's vision well enough to write two theses they'd agree with without hesitation.
+
+**The five domains to cover:**
 
 1. **Product** — What is it? (app, landing page, portfolio, SaaS, e-commerce, blog, dashboard...)
 2. **Audience** — Who uses it? (devs, designers, general public, enterprise, kids, luxury...)
-3. **Visual keywords** — 3 to 5 adjectives that define the mood:
-   - Examples: "minimal brutal dark", "playful warm organic", "luxury editorial clean", "cyberpunk neon dense"
-4. **Visual references** — Sites, screenshots, mood boards, Dribbble/Behance links, anything visual
-5. **Tech stack** — What's already in place? Or starting from scratch? (Next.js, Astro, Svelte, vanilla, etc.)
+3. **Mood** — 3 to 5 adjectives that define the visual feel
+4. **References** — Sites, screenshots, mood boards, anything visual
+5. **Tech stack** — What's already in place? Or starting from scratch?
 
-Do NOT proceed until all 5 answers are collected. If the user is vague on references, suggest 2-3 sites that match their keywords using WebSearch.
+**How to ask:** One question at a time, starting with the least obvious domain. If you already know the tech stack from scanning `package.json`, don't ask — start with mood or audience instead. Each answer reshapes how you ask the next question.
+
+**How to handle vague answers:**
+
+When the user says "modern" or "clean" or "I don't know, just make it nice":
+
+1. **Validate** — "That's a starting point. Let's make it precise."
+2. **Offer concrete options** — "Clean like Stripe's editorial whitespace, clean like Linear's dense-but-organized, or clean like Apple's dramatic minimalism?"
+3. **Reframe** — "What would feel *wrong*? What sites make you cringe? That's just as useful."
+4. **Name the consequence** — "This choice drives the entire color palette and typography. Worth spending a minute on."
+
+**Never** interpret a vague answer as confirmation. "Yeah something like that" means dig deeper — ask which part of "that" resonates.
+
+**When the user pushes to skip or rush brainstorm:**
+
+Do NOT capitulate. Instead:
+
+> "On a couvert [domaines couverts]. Il me manque [domaines manquants] — ça va directement impacter [conséquence concrète]. Je pose encore une question ou tu préfères que je fasse des hypothèses et tu corriges après ?"
+
+This gives them an informed choice. If they choose assumptions, name each assumption explicitly in the thesis.
+
+**Never** negotiate the number of remaining questions ("just two more, I promise"). You don't know how many you need until you hear the answers.
+
+**When to stop:** When you can write both theses (visual + interaction) and you'd bet money the user will say "oui parfait." If you'd be guessing on even one aspect, keep asking.
 
 ---
 
 ### Phase 2 — THESIS (define direction, get validation)
 
-From the brainstorm answers, produce two theses:
+From the brainstorm, produce two theses:
 
 #### Visual Thesis
 
-A single sentence that captures the entire visual identity.
+A single sentence that captures the entire visual identity. **Must explicitly address all four:**
+
+- **Color direction** — dark/light, palette family, accent color
+- **Typography spirit** — serif/sans/mono, weight usage, size contrast
+- **Spacing philosophy** — dense/airy, base unit feel
+- **Component style** — rounded/sharp, bordered/filled, elevated/flat
 
 > Example: "Dark neo-brutalist interface with bold monospace type, fluorescent chartreuse accents, generous whitespace, raw-edged components with offset shadows."
 
-Must cover: color direction, typography spirit, spacing philosophy, component style.
+**Self-check:** read your thesis back. If any of the four areas is missing or vague ("nice typography"), rewrite it before presenting.
 
 #### Interaction Thesis
 
-A single sentence that captures the motion and interaction language.
+A single sentence that captures the motion and interaction language. **Must explicitly address all four:**
+
+- **Timing range** — fast (100-200ms), medium (200-400ms), or slow (400ms+)
+- **Hover behavior** — what happens on hover
+- **Scroll behavior** — reveals, parallax, or nothing
+- **Forbidden patterns** — what this project will NOT do
 
 > Example: "Fast and dry transitions (100-200ms), hover with subtle scale (1.02), scroll-triggered reveals with stagger, no bounce or elastic — all sharp ease-out."
 
-Must cover: timing range, hover behavior, scroll behavior, forbidden patterns.
+**Self-check:** read your thesis back. If you can't immediately derive the CSS/JS properties from it, it's too vague. Rewrite.
 
-**Wait for explicit user validation of BOTH theses before moving on.** Iterate if needed.
+**Wait for explicit user validation of BOTH theses before moving on.** If the user pushes back, don't start over — ask what feels wrong and adjust.
 
 ---
 
@@ -129,7 +177,7 @@ Implementation rules:
 
 ---
 
-### Phase 5 — AUDIT
+### Phase 5 — AUDIT (never skip)
 
 Load `_creative/design-audit` sub-skill:
 
@@ -177,3 +225,18 @@ When invoked on a project that already has design/styling:
 4. Preserve functionality and layout structure — only replace the visual layer
 
 This is intentional: `/design-excellence` rebuilds the visual universe. To enhance what exists, use `/creative-excellence` instead.
+
+---
+
+## Red Flags — You're About to Violate This Skill
+
+| Thought | Reality |
+|---------|---------|
+| "The user already said 'minimal dark' — I have enough for a thesis" | Two words aren't five domains. Keep asking. |
+| "I'll ask all five brainstorm questions at once" | One at a time. The answer to 'audience' changes how you ask about 'mood'. |
+| "The user seems impatient, let's skip to coding" | Use the pressure protocol. A bad thesis costs days, not minutes. |
+| "I'll pick colors that feel right" | Every token comes from MASTER.md. No freelancing. |
+| "I'll do the whole site in one pass" | Page by page. Validate page by page. |
+| "This animation would be cool even though the thesis says no bounce" | The thesis is law. Change it? Re-validate with the user first. |
+| "The audit can wait, the user seems happy" | The audit is not optional. Phase 5 always runs. |
+| "I'll interpret 'yeah something like that' as a yes" | That's not confirmation. Ask which part resonates. |
