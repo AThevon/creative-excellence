@@ -67,9 +67,11 @@ Internal modules loaded dynamically by the orchestrators. Not invocable directly
 **Option A - Download from GitHub Releases (recommended):**
 
 1. Go to the [Releases](https://github.com/AThevon/creative-excellence/releases) page
-2. Download all the `.zip` files from the latest release
+2. Download the individual skill ZIPs (e.g. `creative-excellence.zip`, `motion-principles.zip`, `gsap.zip`...)
 3. On claude.ai, go to **Customize > Skills > Upload ZIP**
-4. Upload each ZIP and enable the toggle
+4. Upload each ZIP individually and enable the toggle
+
+> `creative-excellence-all.zip` is a convenience archive containing all skills in one download. Extract it first, then upload each sub-folder as a separate skill - claude.ai requires one ZIP per skill.
 
 **Option B - Build from source:**
 
