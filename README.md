@@ -2,7 +2,7 @@
 
 > Two skills. One standard. Zero AI slop.
 
-Creative coding plugin for [Claude Code](https://claude.ai/code) — transforms any interface from functional to exceptional through motion design, interaction patterns, and visual systems.
+Creative coding skills for [Claude Code](https://claude.ai/code) and [claude.ai](https://claude.ai) - transforms any interface from functional to exceptional through motion design, interaction patterns, and visual systems.
 
 ---
 
@@ -60,6 +60,30 @@ Internal modules loaded dynamically by the orchestrators. Not invocable directly
 
 ## Installation
 
+### claude.ai (web/app)
+
+**Prerequisites:** Plan Pro, Max, Team or Enterprise with "Code execution" enabled.
+
+**Option A - Download from GitHub Releases (recommended):**
+
+1. Go to the [Releases](https://github.com/AThevon/creative-excellence/releases) page
+2. Download all the `.zip` files from the latest release
+3. On claude.ai, go to **Customize > Skills > Upload ZIP**
+4. Upload each ZIP and enable the toggle
+
+**Option B - Build from source:**
+
+```bash
+git clone https://github.com/AThevon/creative-excellence.git
+cd creative-excellence
+./package-for-claude-ai.sh
+# ZIPs are in dist/
+```
+
+> **Important:** The orchestrators (`creative-excellence`, `design-excellence`) load sub-skills dynamically. Upload all the sub-skill ZIPs too (motion-principles, gsap, framer-motion, css-native, threejs-r3f, canvas-generative, design-audit, ui-ux-pro-max) for full functionality.
+
+### Claude Code (CLI)
+
 ```bash
 # Add the plugin marketplace
 /plugin marketplace add git@github.com:AThevon/creative-excellence.git
@@ -99,7 +123,7 @@ creative-excellence/
 └── README.md
 ```
 
-Orchestrators detect the plugin root at runtime and load sub-skills via `Read`. Sub-skills in `_creative/` are never invoked directly — the underscore prefix keeps them internal.
+Orchestrators detect the environment at runtime (Claude Code plugin directory or claude.ai `/mnt/skills/user/`) and load sub-skills via `Read`. Sub-skills in `_creative/` are never invoked directly - the underscore prefix keeps them internal.
 
 ---
 

@@ -39,13 +39,23 @@ allowed-tools: Bash, Read, Edit, Write, Grep, Glob, WebSearch, Agent
 
 ---
 
-## Plugin Root Detection
+## Sub-skills Path Detection
 
 ```bash
-PLUGIN_ROOT=$(find ~/.claude/plugins -path "*/creative-excellence/skills" -type d | head -1 | sed 's|/skills$||')
+# Environment detection:
+# - claude.ai: skills are uploaded individually to /mnt/skills/user/<name>/
+# - Claude Code: skills live under the plugin directory
+if [ -d "/mnt/skills/user/motion-principles" ]; then
+  # claude.ai - each sub-skill is its own uploaded skill
+  SKILL_BASE="/mnt/skills/user"
+else
+  # Claude Code plugin
+  PLUGIN_ROOT=$(find ~/.claude/plugins -path "*/creative-excellence/skills" -type d | head -1 | sed 's|/skills$||')
+  SKILL_BASE="$PLUGIN_ROOT/skills/_creative"
+fi
 ```
 
-All sub-skills live in `$PLUGIN_ROOT/skills/_creative/`.
+All sub-skills are loaded via `$SKILL_BASE/<name>/SKILL.md`.
 
 ---
 
@@ -129,7 +139,7 @@ A single sentence that captures the motion and interaction language. **Must expl
 Load `_creative/ui-ux-pro-max` sub-skill:
 
 ```bash
-cat "$PLUGIN_ROOT/skills/_creative/ui-ux-pro-max/SKILL.md"
+cat "$SKILL_BASE/ui-ux-pro-max/SKILL.md"
 ```
 
 Generate the complete design system based on both theses:
@@ -163,9 +173,9 @@ Load sub-skills based on tech stack and interaction thesis. Always load `motion-
 
 ```bash
 # Always first
-cat "$PLUGIN_ROOT/skills/_creative/motion-principles/SKILL.md"
+cat "$SKILL_BASE/motion-principles/SKILL.md"
 # Then per stack: framer-motion, gsap, css-native, threejs-r3f, canvas-generative
-cat "$PLUGIN_ROOT/skills/_creative/<skill>/SKILL.md"
+cat "$SKILL_BASE/<skill>/SKILL.md"
 ```
 
 Implementation rules:
@@ -182,7 +192,7 @@ Implementation rules:
 Load `_creative/design-audit` sub-skill:
 
 ```bash
-cat "$PLUGIN_ROOT/skills/_creative/design-audit/SKILL.md"
+cat "$SKILL_BASE/design-audit/SKILL.md"
 ```
 
 Run the full audit checklist:

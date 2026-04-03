@@ -100,35 +100,45 @@ If rejected, don't start over — ask what feels wrong about it and adjust.
 
 ### 5. LOAD — Load the relevant sub-skills
 
-Detect the plugin root and load the necessary skills:
+Detect the environment and resolve the sub-skills base path:
 
 ```bash
-PLUGIN_ROOT=$(find ~/.claude/plugins -path "*/creative-excellence/skills" -type d | head -1 | sed 's|/skills$||')
+# Environment detection:
+# - claude.ai: skills are uploaded individually to /mnt/skills/user/<name>/
+# - Claude Code: skills live under the plugin directory
+if [ -d "/mnt/skills/user/motion-principles" ]; then
+  # claude.ai - each sub-skill is its own uploaded skill
+  SKILL_BASE="/mnt/skills/user"
+else
+  # Claude Code plugin
+  PLUGIN_ROOT=$(find ~/.claude/plugins -path "*/creative-excellence/skills" -type d | head -1 | sed 's|/skills$||')
+  SKILL_BASE="$PLUGIN_ROOT/skills/_creative"
+fi
 ```
 
 **Always load:**
-- `$PLUGIN_ROOT/skills/_creative/motion-principles/SKILL.md` — the core principles
+- `$SKILL_BASE/motion-principles/SKILL.md` - the core principles
 
 **Load based on the detected stack:**
 
 | Detected stack | Sub-skill to load |
 |----------------|-------------------|
-| gsap | `_creative/gsap/SKILL.md` |
-| framer-motion | `_creative/framer-motion/SKILL.md` |
-| Pure CSS / Tailwind / no lib | `_creative/css-native/SKILL.md` |
-| three / @react-three | `_creative/threejs-r3f/SKILL.md` |
-| Canvas / generative | `_creative/canvas-generative/SKILL.md` |
+| gsap | `$SKILL_BASE/gsap/SKILL.md` |
+| framer-motion | `$SKILL_BASE/framer-motion/SKILL.md` |
+| Pure CSS / Tailwind / no lib | `$SKILL_BASE/css-native/SKILL.md` |
+| three / @react-three | `$SKILL_BASE/threejs-r3f/SKILL.md` |
+| Canvas / generative | `$SKILL_BASE/canvas-generative/SKILL.md` |
 
 **Load based on the need:**
 
 | Need | Sub-skill |
 |------|-----------|
-| Visual audit requested | `_creative/design-audit/SKILL.md` |
-| Advanced UI/UX questions | `_creative/ui-ux-pro-max/SKILL.md` |
+| Visual audit requested | `$SKILL_BASE/design-audit/SKILL.md` |
+| Advanced UI/UX questions | `$SKILL_BASE/ui-ux-pro-max/SKILL.md` |
 
 If additional details are needed, read the `references/` files of the relevant sub-skill:
 ```
-$PLUGIN_ROOT/skills/_creative/<name>/references/<file>.md
+$SKILL_BASE/<name>/references/<file>.md
 ```
 
 ### 6. IMPLEMENT — Code while respecting the loaded principles
