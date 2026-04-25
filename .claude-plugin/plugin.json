@@ -1,6 +1,6 @@
 {
   "name": "creative-excellence",
-  "description": "Creative coding excellence for Claude Code and claude.ai - animations, 3D, design systems, motion principles",
-  "version": "1.1.0",
+  "description": "Creative coding excellence for Claude Code and claude.ai - Web, Android (Compose), Apple (SwiftUI iOS + macOS). Animations, motion principles, design systems, shaders, anti-AI-slop.",
+  "version": "2.0.0",
   "author": { "name": "AThevon" }
 }
