@@ -67,13 +67,13 @@ Box(
 Steven Hoober's research shows portrait phone use is overwhelmingly one-handed or cradled, with the thumb pivoting from the bottom corner. The screen splits into reachable zones:
 
 ```
-+-----------------+
-|  HARD | OK | HARD |   <- top: stretch, two-handed only
-|-------+----+------|
-|   OK  | OK |  OK  |   <- middle: comfortable
-|-------+----+------|
-|  EASY |EASY| EASY |   <- bottom: natural thumb arc
-+-----------------+
++------+----+------+
+| HARD | OK | HARD |   <- top: stretch, two-handed only
++------+----+------+
+|  OK  | OK |  OK  |   <- middle: comfortable
++------+----+------+
+| EASY |EASY| EASY |   <- bottom: natural thumb arc
++------+----+------+
 ```
 
 - **Bottom third (EASY):** primary CTA, send, confirm, FAB, tab bar.
@@ -131,7 +131,7 @@ Column(
 | Web JS | `window.matchMedia('(prefers-reduced-motion: reduce)')` |
 | SwiftUI | `@Environment(\.accessibilityReduceMotion) var reduceMotion` |
 | UIKit | `UIAccessibility.isReduceMotionEnabled` |
-| Compose | `LocalAccessibilityManager.current.isReduceTransitions` (custom helper, see references) |
+| Compose | Custom helper using `Settings.Global.ANIMATOR_DURATION_SCALE` (see code below; deep-dive in `references/accessibility-mobile.md`) |
 
 **SwiftUI:**
 ```swift
@@ -175,6 +175,8 @@ fun rememberReduceMotion(): Boolean {
 val reduceMotion = rememberReduceMotion()
 val spec = if (reduceMotion) snap() else tween<Float>(durationMillis = 300)
 ```
+
+> Note: `ANIMATOR_DURATION_SCALE` only reflects the developer-options "Animations off" toggle, not the user-facing accessibility setting. For the latter ("Remove animations" in Settings -> Accessibility on Android 14+), use `AccessibilityManager.areTransitionsEnabled()` (API 34+). Deep dive in `references/accessibility-mobile.md`.
 
 ---
 
