@@ -58,13 +58,22 @@ Every Framer Motion `initial` + `animate` should have an `exit` prop when inside
 
 ## Accessibility Audit
 
-### prefers-reduced-motion -- MANDATORY
+### Reduced motion - MANDATORY
+
+A project with animation MUST have at least one global handler matching its stack. Run all 3 greps:
 
 ```bash
-grep -rn 'prefers-reduced-motion' --include='*.css' --include='*.scss' --include='*.ts' --include='*.tsx' --include='*.js' --include='*.jsx' src/
+# Web
+grep -rn 'prefers-reduced-motion' --include='*.css' --include='*.scss' --include='*.ts' --include='*.tsx' --include='*.js' --include='*.jsx' src/ 2>/dev/null
+
+# SwiftUI / UIKit
+grep -rn 'accessibilityReduceMotion\|isReduceMotionEnabled\|reduceMotionStatusDidChangeNotification' --include='*.swift' . 2>/dev/null
+
+# Compose
+grep -rn 'LocalAccessibilityManager\|isReduceTransitions\|TRANSITION_ANIMATION_SCALE\|ANIMATOR_DURATION_SCALE\|areTransitionsEnabled' --include='*.kt' . 2>/dev/null
 ```
 
-**If zero results: Critical violation.** Every project with animation MUST have at least one global `prefers-reduced-motion` handler (CSS media query or JS hook). Check `motion-principles/SKILL.md` for implementation patterns.
+**Zero results across all 3 in an animated project = critical violation.** At least one handler must exist somewhere. Cross-reference `motion-principles/SKILL.md` for canonical implementations per stack.
 
 ### Contrast ratio 4.5:1
 
@@ -126,6 +135,18 @@ npx source-map-explorer dist/**/*.js 2>/dev/null || npx vite-bundle-visualizer 2
 
 Reference sizes (gzipped): framer-motion ~30KB, GSAP ~25KB, popmotion ~5KB, CSS-only = 0KB. If the project only uses fade+slide, a 30KB lib is overkill.
 
+On mobile native, the APK / IPA size matters. A third-party animation library adds typically 500KB-2MB:
+
+| Library | Size impact (uncompressed) |
+|---|---|
+| Lottie (iOS) | ~600KB |
+| Lottie (Android) | ~900KB |
+| Rive (iOS) | ~1.5MB |
+| Rive (Android) | ~2MB |
+| Native Compose / SwiftUI animations | 0KB (built-in) |
+
+If the project only uses fades, slides, and springs, native APIs (Compose `animate*AsState` + spring, SwiftUI `withAnimation`) are sufficient. Justify a Lottie / Rive dependency only for genuinely complex pre-designed animations (e.g., onboarding illustrations).
+
 ### requestAnimationFrame vs setTimeout
 
 ```bash
@@ -146,13 +167,22 @@ grep -rnoE 'duration[:"'\''= ]+[0-9.]+' --include='*.tsx' --include='*.jsx' --in
 
 A well-designed project uses 3-5 distinct durations max (e.g., 0.15, 0.25, 0.35, 0.5). If you see 15 different values, extract them into a motion tokens file.
 
-### Easing consistency
+### Easing inventory
+
+Run all 3 greps to inventory easing values across the codebase:
 
 ```bash
-grep -rnoE 'ease[A-Za-z]*|cubic-bezier\([^)]+\)|spring\([^)]*\)' --include='*.tsx' --include='*.jsx' --include='*.ts' --include='*.css' --include='*.scss' src/ | sort -t: -k3 | uniq -c -f2 | sort -rn
+# Web (CSS / JS / TSX)
+grep -rnoE 'ease[A-Za-z]*|cubic-bezier\([^)]+\)|spring\([^)]*\)' --include='*.tsx' --include='*.jsx' --include='*.ts' --include='*.css' --include='*.scss' src/ 2>/dev/null
+
+# SwiftUI
+grep -rnoE '\.spring\([^)]*\)|\.snappy|\.bouncy|\.smooth|\.linear\(|\.easeIn|\.easeOut|\.interpolatingSpring' --include='*.swift' . 2>/dev/null
+
+# Compose
+grep -rnoE 'spring\([^)]*\)|tween\([^)]*\)|FastOutSlowInEasing|LinearOutSlowInEasing|FastOutLinearInEasing|CubicBezierEasing' --include='*.kt' . 2>/dev/null
 ```
 
-Same rule: 3-5 named easings max. Random `cubic-bezier` values scattered across files = visual inconsistency.
+Same rule across all stacks: 3-5 named easings max in the design system. Random values scattered across files = visual inconsistency. If the codebase has 12 different `cubic-bezier(...)` values or 8 custom `spring(response:dampingFraction:)` configurations, that's a design-system violation, fix it by centralizing into named tokens.
 
 ### Symmetric enter/exit
 
@@ -166,6 +196,30 @@ grep -A5 'exit=' --include='*.tsx' --include='*.jsx' -rn src/
 ```
 
 Compare `animate` and `exit` props side by side. Asymmetric timing (fast exit, slow enter) is correct. The reverse is wrong.
+
+---
+
+## Stack-specific audit
+
+Pick the subsection matching the project stack.
+
+### Compose (Android / Multiplatform)
+- [ ] Run **Layout Inspector** (Android Studio): inspect recompositions, identify components recomposing on every state change.
+- [ ] Run **Macrobenchmark** (`androidx.benchmark.macro`): measure frame timing on a real device under representative scrolling / animation load. Target: <16.67ms per frame at 60fps, <8.33ms at 120fps.
+- [ ] Inspect **recomposition counts** via `Modifier.recomposeHighlighter()` (Compose 1.6+) or Layout Inspector.
+- [ ] Generate **Baseline Profiles** (`BaselineProfileGenerator`) for production builds.
+- [ ] Verify `Modifier.semantics` is set on custom components (TalkBack support).
+
+### SwiftUI (iOS / macOS)
+- [ ] Run **Instruments Time Profiler**: identify hot paths during animation (target: zero frames over 16.67ms).
+- [ ] Run **Instruments Hitches Instrument** (iOS 14+): detects dropped frames and stalls.
+- [ ] Run **Instruments GPU Frame Capture** for Metal shaders: verify shader compile time, GPU vs CPU bottleneck.
+- [ ] Verify `.accessibilityLabel` / `.accessibilityHint` on every interactive view.
+- [ ] Test with Dynamic Type at 200% size (`Environment Overrides` in Xcode).
+- [ ] Test with Reduce Motion ON.
+
+### Web
+- [ ] Existing checklist above (Lighthouse, Chrome DevTools Performance, etc.).
 
 ---
 
